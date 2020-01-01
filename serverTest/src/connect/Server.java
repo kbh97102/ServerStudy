@@ -1,39 +1,71 @@
 package connect;
 
+import thread.ServerThread;
+
 import java.io.*;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
+
+    private static Selector selector;
+    private static ServerSocketChannel serverSocketChannel;
+    private static ByteBuffer byteBuffer;
+
     public static void main(String[] args) {
-        try{
-            ServerSocket server = new ServerSocket(10001);
-            System.out.println("Waiting Connect ..");
-
-            Socket socket = server.accept();
-
-            InetAddress inetAddress = socket.getInetAddress();
-            System.out.println(inetAddress.getHostAddress()+"호스트 주소");
-
-            OutputStream outputStream = socket.getOutputStream();
-            InputStream inputStream = socket.getInputStream();
-
-            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(outputStream));
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line = null;
-            while((line = bufferedReader.readLine())!=null){
-                printWriter.println(line);
-                printWriter.flush();
+        try {
+            selector = Selector.open();
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.bind(new InetSocketAddress("127.0.0.1", 3000));
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+            byteBuffer = ByteBuffer.allocate(256);
+            while (true) {
+                selector.select();
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Iterator<SelectionKey> selectionKeyIterator = selectedKeys.iterator();
+                while (selectionKeyIterator.hasNext()) {
+                    SelectionKey key = selectionKeyIterator.next();
+                    if (key.isAcceptable()) {
+                        register(selector,serverSocketChannel);
+                    }
+                    if (key.isReadable()) {
+                        answerWithEcho(byteBuffer,key);
+                    }
+                    selectionKeyIterator.remove();
+                }
             }
-
-            printWriter.close();
-            bufferedReader.close();
-            socket.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void answerWithEcho(ByteBuffer byteBuffer, SelectionKey key) throws IOException {
+
+        SocketChannel client = (SocketChannel) key.channel();
+        client.read(byteBuffer);
+        if (new String(byteBuffer.array()).trim().equals("EXIT")) {
+            client.close();
+            System.out.println("No client");
+        }
+        byteBuffer.flip();
+        client.write(byteBuffer);
+        byteBuffer.clear();
+    }
+
+    private static void register(Selector selector, ServerSocketChannel serverSocketChannel) throws IOException {
+        SocketChannel client = serverSocketChannel.accept();
+        client.configureBlocking(false);
+        client.register(selector,SelectionKey.OP_READ);
+        System.out.println("new Client connected");
     }
 }
