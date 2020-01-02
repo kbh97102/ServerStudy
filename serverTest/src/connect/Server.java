@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -50,14 +52,16 @@ public class Server {
     }
 
     private static void answerWithEcho(ByteBuffer byteBuffer, SelectionKey key) throws IOException {
-
         SocketChannel client = (SocketChannel) key.channel();
+        Charset charset = StandardCharsets.UTF_8;
         client.read(byteBuffer);
+        System.out.println(new String(byteBuffer.array(),charset));
         if (new String(byteBuffer.array()).trim().equals("EXIT")) {
             client.close();
             System.out.println("No client");
         }
         byteBuffer.flip();
+        byteBuffer = charset.encode("String");
         client.write(byteBuffer);
         byteBuffer.clear();
     }
@@ -66,6 +70,6 @@ public class Server {
         SocketChannel client = serverSocketChannel.accept();
         client.configureBlocking(false);
         client.register(selector,SelectionKey.OP_READ);
-        System.out.println("new Client connected");
+        System.out.println("new Client connected "+client.hashCode());
     }
 }
