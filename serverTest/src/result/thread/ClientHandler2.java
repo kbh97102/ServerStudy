@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class ClientHandler implements CompletionHandler<Integer, Attachment> {
+public class ClientHandler2 implements CompletionHandler<Integer, Attachment> {
     @Override
     public void completed(Integer result, Attachment att) {
         ByteBuffer buffer = att.getByteBuffer();
@@ -16,7 +16,7 @@ public class ClientHandler implements CompletionHandler<Integer, Attachment> {
             buffer.flip();
             Charset charset = StandardCharsets.UTF_8;
             String msg = charset.decode(buffer).toString();
-            System.out.println("Receive response data from the server: " + msg);
+
 
             //TODO callback 함수가 여러개 존재시 처리 순서 방식 해결
             att.setReadMode(false);

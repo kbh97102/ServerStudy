@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
-public class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Attachment> {
+public class AcceptHandler2 implements CompletionHandler<AsynchronousSocketChannel, Attachment> {
 
     @Override
     public void completed(AsynchronousSocketChannel client, Attachment attachment) {

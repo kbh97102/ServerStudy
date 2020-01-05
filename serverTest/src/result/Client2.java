@@ -1,6 +1,6 @@
 package result;
 
-import result.thread.ClientHandler;
+import result.thread.ClientHandler2;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -31,7 +31,7 @@ public class Client2 {
             attachment.getByteBuffer().flip();
 
 
-            client.write(attachment.getByteBuffer(),attachment,new ClientHandler());
+            client.write(attachment.getByteBuffer(),attachment,new ClientHandler2());
 
             try{
                 Thread.currentThread().join();

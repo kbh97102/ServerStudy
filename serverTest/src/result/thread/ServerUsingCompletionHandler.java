@@ -33,7 +33,7 @@ public class ServerUsingCompletionHandler implements Runnable{
         Attachment attachment = new Attachment();
         attachment.setServerSocket(serverSocket);
         attachment.setClients(clients);
-        serverSocket.accept(attachment,new AcceptHandler());
+        serverSocket.accept(attachment,new AcceptHandler2());
 
 
         try{
