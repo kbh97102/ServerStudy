@@ -39,9 +39,8 @@ public class Chat_1 {
 
     private void initialize() {
         client = new Client_gui(this::serverTextDisplay);
+        client.addDisplay(this::serverTextDisplay);
         client.run();
-//        System.out.println("Block here?");
-//        client.readFromServer();
     }
 
     public void userTextDisplaySend() {

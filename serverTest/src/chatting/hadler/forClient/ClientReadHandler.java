@@ -1,6 +1,8 @@
 package chatting.hadler.forClient;
 
-import result.Attachment;
+
+
+import chatting.core.Attachment;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
@@ -18,13 +20,13 @@ public class ClientReadHandler implements CompletionHandler<Integer, Attachment>
 
     @Override
     public void completed(Integer result, Attachment attachment) {
-        ByteBuffer buffer = attachment.getByteBuffer();
+        ByteBuffer buffer = attachment.getBuffer();
         buffer.flip();
         Charset charset = StandardCharsets.UTF_8;
         display.accept(charset.decode(buffer).toString());
         buffer.clear();
 
-        attachment.getClient().read(attachment.getByteBuffer(),attachment,this);
+        attachment.getClient().read(attachment.getBuffer(),attachment,this);
     }
 
     @Override

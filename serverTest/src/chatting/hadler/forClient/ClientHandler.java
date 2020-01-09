@@ -1,6 +1,7 @@
 package chatting.hadler.forClient;
 
-import result.Attachment;
+
+import chatting.core.Attachment;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
@@ -17,7 +18,7 @@ public class ClientHandler implements CompletionHandler<Integer, Attachment> {
 
     @Override
     public void completed(Integer result, Attachment att) {
-        ByteBuffer buffer = att.getByteBuffer();
+        ByteBuffer buffer = att.getBuffer();
         if (att.isReadMode()) {
             //읽어온 데이터
             buffer.flip();
@@ -34,9 +35,9 @@ public class ClientHandler implements CompletionHandler<Integer, Attachment> {
 //            att.getClient().write(buffer, att, this);
 
         } else {
-            att.setReadMode(true);
-            buffer.clear();
-            att.getClient().read(buffer, att, this);
+//            att.setReadMode(true);
+//            buffer.clear();
+//            att.getClient().read(buffer, att, this);
         }
     }
 

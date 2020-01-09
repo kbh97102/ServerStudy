@@ -1,8 +1,8 @@
 package chatting.communication;
 
+import chatting.core.Attachment;
 import chatting.hadler.forClient.ClientHandler;
 import chatting.hadler.forClient.ClientReadHandler;
-import result.Attachment;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +22,7 @@ public class Client_gui {
     private Attachment attachment = new Attachment();
     private ClientReadHandler readHandler = new ClientReadHandler();
 
-    public Client_gui(Consumer<String> display){
+    public Client_gui(Consumer<String> display) {
         this.display = display;
         clientHandler = new ClientHandler();
         clientHandler.addDisplay(display);
@@ -30,35 +30,43 @@ public class Client_gui {
     }
 
     public void run() {
-        try{
+        try {
             AsynchronousSocketChannel client = AsynchronousSocketChannel.open();
-            Future<?> connectFuture = client.connect(new InetSocketAddress("localHost",3000));
+            Future<?> connectFuture = client.connect(new InetSocketAddress("localHost", 3000));
             connectFuture.get();
 
             Charset charset = StandardCharsets.UTF_8;
 
             attachment.setClient(client);
             attachment.setReadMode(false);
-            attachment.setByteBuffer(ByteBuffer.allocate(1024));
-//            attachment.getByteBuffer().put(charset.encode("Client1 is entered"));
-//            attachment.getByteBuffer().flip();
+            attachment.setBuffer(ByteBuffer.allocate(1024));
 
-//            ByteBuffer buffer = charset.encode("Client1 is entered");
-//            buffer.flip();
-//            client.write(buffer);
+            readFromServer();
 
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
-    public void writeToServer(String msg){
-        attachment.setReadMode(false);
-        attachment.getByteBuffer().clear();
-        attachment.getByteBuffer().put(charset.encode(msg));
-        attachment.getByteBuffer().flip();
-        attachment.getClient().write(attachment.getByteBuffer(), attachment,clientHandler);
+
+    /**
+     * Send Data with UserInput( TextField Data)
+     *
+     * @param msg Message
+     */
+    public void writeToServer(String msg) {
+        attachment.getBuffer().clear();
+        attachment.getBuffer().put(charset.encode(msg));
+        attachment.getBuffer().flip();
+        attachment.getClient().write(attachment.getBuffer());
+        System.out.println("Client Send");
     }
-    public void readFromServer(){
-        attachment.getClient().read(attachment.getByteBuffer(),attachment,readHandler);
+
+    public void readFromServer() {
+        attachment.getBuffer().clear();
+        attachment.getClient().read(attachment.getBuffer(), attachment, readHandler);
+    }
+
+    public void addDisplay(Consumer<String> display) {
+        this.display = display;
     }
 }

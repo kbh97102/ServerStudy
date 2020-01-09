@@ -3,12 +3,22 @@ package chatting.core;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.Vector;
 
 public class Attachment {
     private AsynchronousServerSocketChannel server;
     private AsynchronousSocketChannel client;
     private ByteBuffer buffer;
     private boolean isReadMode;
+    private Vector<Attachment> clients;
+
+    public Vector<Attachment> getClients() {
+        return clients;
+    }
+
+    public void setClients(Vector<Attachment> clients) {
+        this.clients = clients;
+    }
 
     public AsynchronousServerSocketChannel getServer() {
         return server;
