@@ -12,6 +12,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 public class Client_gui {
@@ -33,7 +35,7 @@ public class Client_gui {
         try {
             AsynchronousSocketChannel client = AsynchronousSocketChannel.open();
             Future<?> connectFuture = client.connect(new InetSocketAddress("localHost", 3000));
-            connectFuture.get();
+            connectFuture.get(3, TimeUnit.SECONDS);
 
             Charset charset = StandardCharsets.UTF_8;
 
@@ -45,6 +47,10 @@ public class Client_gui {
 
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
+        }
+        catch (TimeoutException t){
+            System.out.println("TimeOut");
+            System.exit(0);
         }
     }
 

@@ -28,7 +28,7 @@ public class Server_gui{
         try {
             group = AsynchronousChannelGroup.withFixedThreadPool(5, Executors.defaultThreadFactory());
             serverSocket = AsynchronousServerSocketChannel.open(group);
-            serverSocket.bind(new InetSocketAddress("127.0.0.1",3000));
+            serverSocket.bind(new InetSocketAddress("192.168.200.104",3000));
         } catch (IOException e) {
             e.printStackTrace();
         }
