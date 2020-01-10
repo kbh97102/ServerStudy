@@ -18,21 +18,25 @@ public class Server {
     private JTextArea textArea = new JTextArea();
     private JTextField textField = new JTextField();
     private Server_gui server;
+    private JLabel label = new JLabel();
 
 
     public Server() {
         contentPanel.setLayout(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        contentPanel.setBackground(Color.BLACK);
-        contentPanel.add(textArea, BorderLayout.CENTER);
+//        contentPanel.setBackground(Color.BLACK);
+//        contentPanel.add(textArea, BorderLayout.CENTER);
         contentPanel.add(textField, BorderLayout.SOUTH);
+
+        label.setOpaque(false);
+        contentPanel.add(label, BorderLayout.CENTER);
 
         mainFrame.add(contentPanel);
 
         textField.addActionListener(event -> sendToAll());
 
 
-        server = new Server_gui(this::displayDataFromClient);
+        server = new Server_gui(this::displayDataFromClient,this::displayImage);
         server.startAccept();
 
 
@@ -50,5 +54,9 @@ public class Server {
         textField.setText("");
         server.sentToAllClient(msg);
     }
-
+    public void displayImage(ImageIcon image){
+        label.setIcon(image);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
 }

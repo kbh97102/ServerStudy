@@ -13,22 +13,36 @@ public class Chat_1 {
     private Client_gui client;
     private Font serverFont = new Font("궁서",Font.BOLD,20);
     private Font clientFont = new Font("고딕",Font.BOLD,15);
+    private JLabel label;
+    private String imagePath = "resource/image/cat.jpg";
 
     public Chat_1() {
         initialize();
         contentPanel.setLayout(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        contentPanel.add(textArea, BorderLayout.CENTER);
-        contentPanel.add(textField, BorderLayout.SOUTH);
+//        contentPanel.add(textArea, BorderLayout.CENTER);
+//        contentPanel.add(textField, BorderLayout.SOUTH);
         textField.setFont(new Font("고딕", Font.BOLD, 15));
         textArea.setFont(new Font("고딕", Font.BOLD, 15));
         textArea.setEditable(false);
         contentPanel.setFocusable(true);
 
+        label = new JLabel();
+        label.setIcon(client.getImage());
+//        label.setIcon(new ImageIcon(imagePath));
+
+        JButton button = new JButton("Click");
+
+        contentPanel.add(button,BorderLayout.SOUTH);
+        contentPanel.add(label,BorderLayout.CENTER);
+
         frame.setTitle("Client1");
 
-        textField.addActionListener(event -> userTextDisplaySend());
-
+//        textField.addActionListener(event -> userTextDisplaySend());
+        button.addActionListener(event -> {
+            client.sendImageToServer(label);
+            System.out.println("Clicked");
+        });
         frame.add(contentPanel);
 
         frame.setSize(700, 700);
@@ -58,5 +72,10 @@ public class Chat_1 {
 
     public String getUserInput(){
         return textField.getText();
+    }
+
+    public void displayImage(ImageIcon image){
+        label.setIcon(image);
+
     }
 }

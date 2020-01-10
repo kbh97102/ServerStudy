@@ -27,6 +27,7 @@ public class TestReadHandler implements CompletionHandler<Integer, Attachment> {
         ByteBuffer buffer = attachment.getBuffer();
         buffer.flip();
 
+
         try {
             display.accept(attachment.getClient().getRemoteAddress() + charset.decode(buffer).toString());
         } catch (IOException e) {

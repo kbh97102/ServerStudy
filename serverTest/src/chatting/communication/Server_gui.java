@@ -1,9 +1,11 @@
 package chatting.communication;
 
 import chatting.core.Attachment;
+import chatting.hadler.forServer.ReadImageHandler;
 import chatting.hadler.forServer.TestAcceptHandler;
 import chatting.hadler.forServer.TestReadHandler;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -22,13 +24,15 @@ public class Server_gui{
     private AsynchronousChannelGroup group;
     private Vector<Attachment> clients = new Vector<>();
     private Consumer<String> display;
+    private Consumer<ImageIcon> imageDisplay;
 
-    public Server_gui(Consumer<String> display){
+    public Server_gui(Consumer<String> display, Consumer<ImageIcon> imageDisplay){
+        this.imageDisplay = imageDisplay;
         this.display = display;
         try {
             group = AsynchronousChannelGroup.withFixedThreadPool(5, Executors.defaultThreadFactory());
             serverSocket = AsynchronousServerSocketChannel.open(group);
-            serverSocket.bind(new InetSocketAddress("192.168.200.104",3000));
+            serverSocket.bind(new InetSocketAddress("127.0.0.1",3000));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,13 +42,13 @@ public class Server_gui{
         Attachment att = new Attachment();
         att.setServer(serverSocket);
         att.setClients(clients);
-        serverSocket.accept(att,new TestAcceptHandler(display, this::readFromClient));
+//        serverSocket.accept(att,new TestAcceptHandler(display, this::readFromClient));
+        serverSocket.accept(att,new TestAcceptHandler(display, this::readDisplayImage));
     }
 
     public void readFromClient(){
         for (Attachment client : clients) {
             if (!client.isReadMode()) {
-                System.out.println("Read test");
                 client.setReadMode(true);
                 client.getClient().read(client.getBuffer(), client, new TestReadHandler(display));
             }
@@ -59,6 +63,17 @@ public class Server_gui{
             Attachment att = clientIterator.next();
             att.getClient().write(buffer);
         }
+    }
+
+    public void readDisplayImage(){
+        for (Attachment client : clients) {
+            if (!client.isReadMode()) {
+                client.setReadMode(true);
+                client.setBuffer(ByteBuffer.allocate(100000));
+                client.getClient().read(client.getBuffer(), client, new ReadImageHandler(imageDisplay));
+            }
+        }
+
     }
 
 }

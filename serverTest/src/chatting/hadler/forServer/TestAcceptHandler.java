@@ -7,6 +7,10 @@ package chatting.hadler.forServer;
 
 import chatting.core.Attachment;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -18,18 +22,18 @@ public class TestAcceptHandler implements CompletionHandler<AsynchronousSocketCh
     private Consumer<String> display;
     private Runnable readHandler;
 
-    public TestAcceptHandler(Consumer<String> display, Runnable readHandler){
+    public TestAcceptHandler(Consumer<String> display, Runnable readHandler) {
         this.display = display;
         this.readHandler = readHandler;
     }
 
     @Override
     public void completed(AsynchronousSocketChannel result, Attachment attachment) {
-        try {
-            display.accept(result.getRemoteAddress()+" is connected");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            display.accept(result.getRemoteAddress()+" is connected");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         Attachment client = new Attachment();
         client.setClient(result);
@@ -39,7 +43,8 @@ public class TestAcceptHandler implements CompletionHandler<AsynchronousSocketCh
 
         attachment.getClients().add(client);
         readHandler.run();
-        attachment.getServer().accept(attachment,this);
+
+        attachment.getServer().accept(attachment, this);
     }
 
     @Override
