@@ -1,22 +1,22 @@
 package chatting.graphics;
 
-import chatting.communication.Client_gui;
+import chatting.communication.Client;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Chat_1 {
+public class Client2GUI {
     private JFrame frame = new JFrame();
     private JPanel contentPanel = new JPanel();
     private JTextField textField = new JTextField();
     private JTextArea textArea = new JTextArea();
-    private Client_gui client;
+    private Client client;
     private Font serverFont = new Font("궁서",Font.BOLD,20);
     private Font clientFont = new Font("고딕",Font.BOLD,15);
     private JLabel label;
     private String imagePath = "resource/image/cat.jpg";
 
-    public Chat_1() {
+    public Client2GUI() {
         initialize();
         contentPanel.setLayout(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -28,7 +28,7 @@ public class Chat_1 {
         contentPanel.setFocusable(true);
 
         label = new JLabel();
-        label.setIcon(client.getImage());
+//        label.setIcon(client.getImage());
 //        label.setIcon(new ImageIcon(imagePath));
 
         JButton button = new JButton("Click");
@@ -52,7 +52,7 @@ public class Chat_1 {
     }
 
     private void initialize() {
-        client = new Client_gui(this::serverTextDisplay);
+        client = new Client(this::serverTextDisplay, this::displayImage);
         client.addDisplay(this::serverTextDisplay);
         client.run();
     }
@@ -76,6 +76,7 @@ public class Chat_1 {
 
     public void displayImage(ImageIcon image){
         label.setIcon(image);
-
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 }

@@ -5,12 +5,17 @@ import chatting.hadler.forServer.ReadImageHandler;
 import chatting.hadler.forServer.TestAcceptHandler;
 import chatting.hadler.forServer.TestReadHandler;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.CompletionHandler;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -18,7 +23,7 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class Server_gui{
+public class Server {
 
     private AsynchronousServerSocketChannel serverSocket;
     private AsynchronousChannelGroup group;
@@ -26,7 +31,7 @@ public class Server_gui{
     private Consumer<String> display;
     private Consumer<ImageIcon> imageDisplay;
 
-    public Server_gui(Consumer<String> display, Consumer<ImageIcon> imageDisplay){
+    public Server(Consumer<String> display, Consumer<ImageIcon> imageDisplay){
         this.imageDisplay = imageDisplay;
         this.display = display;
         try {
@@ -73,7 +78,26 @@ public class Server_gui{
                 client.getClient().read(client.getBuffer(), client, new ReadImageHandler(imageDisplay));
             }
         }
-
     }
 
+    public void sendImageToClients(JLabel label){
+        try {
+            ImageIcon imageIcon = (ImageIcon) label.getIcon();
+            Image image = imageIcon.getImage();
+            BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),image.getHeight(null),BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = bufferedImage.createGraphics();
+            graphics.drawImage(image,null,null);
+            graphics.dispose();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpg", output);
+            output.flush();
+            ByteBuffer buffer = ByteBuffer.wrap(output.toByteArray());
+
+            for(Attachment client : clients){
+                client.getClient().write(buffer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

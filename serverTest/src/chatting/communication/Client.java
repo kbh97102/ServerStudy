@@ -3,6 +3,7 @@ package chatting.communication;
 import chatting.core.Attachment;
 import chatting.hadler.forClient.ClientHandler;
 import chatting.hadler.forClient.ClientReadHandler;
+import chatting.hadler.forClient.ClientReadImageHandler;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,19 +25,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
-public class Client_gui {
+public class Client {
 
     private Consumer<String> display;
     private ClientHandler clientHandler;
     private Charset charset = StandardCharsets.UTF_8;
     private Attachment attachment = new Attachment();
     private ClientReadHandler readHandler = new ClientReadHandler();
-
+    private Consumer<ImageIcon> imageDisplay;
 
     private String imagePath = "resource/image/cat.jpg";
 
-    public Client_gui(Consumer<String> display) {
-
+    public Client(Consumer<String> display, Consumer<ImageIcon> imageDisplay) {
+        this.imageDisplay = imageDisplay;
         this.display = display;
         clientHandler = new ClientHandler();
         clientHandler.addDisplay(display);
@@ -57,10 +58,10 @@ public class Client_gui {
 
             attachment.setClient(client);
             attachment.setReadMode(false);
-            attachment.setBuffer(ByteBuffer.allocate(1024));
+            attachment.setBuffer(ByteBuffer.allocate(100000));
 
 //            readFromServer();
-
+            readImageFromServer();
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException t) {
@@ -91,6 +92,9 @@ public class Client_gui {
         this.display = display;
     }
 
+    public void readImageFromServer(){
+        attachment.getClient().read(attachment.getBuffer(), attachment,new ClientReadImageHandler(imageDisplay));
+    }
     public void sendImageToServer(JLabel label) {
         try {
             ImageIcon imageIcon = (ImageIcon) label.getIcon();

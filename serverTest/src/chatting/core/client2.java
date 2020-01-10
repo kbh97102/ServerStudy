@@ -1,9 +1,9 @@
 package chatting.core;
 
-import chatting.graphics.Chat_1;
+import chatting.graphics.Client1GUI;
 
 public class client2 {
     public static void main(String[] args) {
-        new Chat_1();
+        new Client1GUI();
     }
 }

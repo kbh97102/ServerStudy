@@ -5,20 +5,18 @@
  */
 package chatting.graphics;
 
-import chatting.communication.Server_gui;
-import chatting.core.Attachment;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.Vector;
 
 public class Server {
     private JFrame mainFrame = new JFrame();
     private JPanel contentPanel = new JPanel();
     private JTextArea textArea = new JTextArea();
     private JTextField textField = new JTextField();
-    private Server_gui server;
+    private chatting.communication.Server server;
     private JLabel label = new JLabel();
+
+    private String imagePath = "resource/image/cat.jpg";
 
 
     public Server() {
@@ -26,17 +24,20 @@ public class Server {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 //        contentPanel.setBackground(Color.BLACK);
 //        contentPanel.add(textArea, BorderLayout.CENTER);
-        contentPanel.add(textField, BorderLayout.SOUTH);
+//        contentPanel.add(textField, BorderLayout.SOUTH);
 
+        JButton button  = new JButton("button");
         label.setOpaque(false);
+        label.setIcon(new ImageIcon(imagePath));
         contentPanel.add(label, BorderLayout.CENTER);
+        contentPanel.add(button, BorderLayout.SOUTH);
 
         mainFrame.add(contentPanel);
 
         textField.addActionListener(event -> sendToAll());
+        button.addActionListener(event -> sendImageToAll());
 
-
-        server = new Server_gui(this::displayDataFromClient,this::displayImage);
+        server = new chatting.communication.Server(this::displayDataFromClient,this::displayImage);
         server.startAccept();
 
 
@@ -58,5 +59,8 @@ public class Server {
         label.setIcon(image);
         contentPanel.revalidate();
         contentPanel.repaint();
+    }
+    public void sendImageToAll(){
+        server.sendImageToClients(label);
     }
 }

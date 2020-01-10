@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class Client {
+public class Client3 {
     public static void main(String[] args) {
         try{
             SocketChannel socket = SocketChannel.open();

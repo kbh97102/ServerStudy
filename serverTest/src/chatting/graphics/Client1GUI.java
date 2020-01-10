@@ -1,35 +1,48 @@
 package chatting.graphics;
 
-import chatting.communication.Client_gui;
+import chatting.communication.Client;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Chat_2 {
+public class Client1GUI {
     private JFrame frame = new JFrame();
     private JPanel contentPanel = new JPanel();
     private JTextField textField = new JTextField();
     private JTextArea textArea = new JTextArea();
-    private Client_gui client;
+    private Client client;
     private Font serverFont = new Font("궁서",Font.BOLD,20);
     private Font clientFont = new Font("고딕",Font.BOLD,15);
+    private JLabel label;
+    private String imagePath = "resource/image/cat.jpg";
 
-    public Chat_2() {
+    public Client1GUI() {
         initialize();
         contentPanel.setLayout(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        contentPanel.add(textArea, BorderLayout.CENTER);
-        contentPanel.add(textField, BorderLayout.SOUTH);
+//        contentPanel.add(textArea, BorderLayout.CENTER);
+//        contentPanel.add(textField, BorderLayout.SOUTH);
         textField.setFont(new Font("고딕", Font.BOLD, 15));
         textArea.setFont(new Font("고딕", Font.BOLD, 15));
         textArea.setEditable(false);
         contentPanel.setFocusable(true);
 
+        label = new JLabel();
+//        label.setIcon(client.getImage());
+//        label.setIcon(new ImageIcon(imagePath));
 
-        frame.setTitle("Client2");
+        JButton button = new JButton("Click");
 
-        textField.addActionListener(event -> userTextDisplaySend());
+        contentPanel.add(button,BorderLayout.SOUTH);
+        contentPanel.add(label,BorderLayout.CENTER);
 
+        frame.setTitle("Client1");
+
+//        textField.addActionListener(event -> userTextDisplaySend());
+        button.addActionListener(event -> {
+            client.sendImageToServer(label);
+            System.out.println("Clicked");
+        });
         frame.add(contentPanel);
 
         frame.setSize(700, 700);
@@ -39,7 +52,8 @@ public class Chat_2 {
     }
 
     private void initialize() {
-        client = new Client_gui(this::serverTextDisplay);
+        client = new Client(this::serverTextDisplay, this::displayImage);
+        client.addDisplay(this::serverTextDisplay);
         client.run();
     }
 
@@ -58,5 +72,11 @@ public class Chat_2 {
 
     public String getUserInput(){
         return textField.getText();
+    }
+
+    public void displayImage(ImageIcon image){
+        label.setIcon(image);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 }
